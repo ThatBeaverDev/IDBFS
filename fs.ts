@@ -2,906 +2,918 @@
  * An interface to access a Filesystem.
  */
 export interface FileStats {
-    size: number;
-    type: "file" | "directory" | "socket";
-    modified: number;
-    created: number;
+	size: number;
+	type: "file" | "directory" | "socket";
+	modified: number;
+	created: number;
 }
 
 export interface FilesystemInterface {
-    ready: boolean;
-    waitForReady(): Promise<void>;
+	ready: boolean;
+	waitForReady(): Promise<void>;
 
-    init?(): Promise<void> | void;
+	init?(): Promise<void> | void;
 
-    registerSocket(directory: string, socketId: number): Promise<void> | void;
+	registerSocket(directory: string, socketId: number): Promise<void> | void;
 
-    /**
-     * Reads contents from a file
-     * @param path The file to read from
-     */
-    readFile(path: string): Promise<string | undefined>;
-    readFile(path: string, format: "text"): Promise<string | undefined>;
-    readFile<T extends Object = Object>(
-        path: string,
-        format: "json",
-    ): Promise<T | undefined>;
-    readFile<T extends Object = Object>(
-        path: string,
-        format?: "text" | "json",
-    ): Promise<string | T | undefined>;
-    /**
-     * Writes contents to a file
-     * @param path File to write to
-     * @param contents Contents to write to the file
-     */
-    writeFile(path: string, contents: string): Promise<void>;
-    /**
-     * Deletes a file
-     * @param path File to delete
-     */
-    unlink(path: string): Promise<void>;
+	/**
+	 * Reads contents from a file
+	 * @param path The file to read from
+	 */
+	readFile(path: string): Promise<string | undefined>;
+	readFile(path: string, format: "text"): Promise<string | undefined>;
+	readFile(path: string, format: "blob"): Promise<Blob | undefined>;
+	readFile<T extends Object = Object>(
+		path: string,
+		format: "json"
+	): Promise<T | undefined>;
+	readFile<T extends Object = Object>(
+		path: string,
+		format?: "text" | "json"
+	): Promise<string | T | undefined>;
+	/**
+	 * Writes contents to a file
+	 * @param path File to write to
+	 * @param contents Contents to write to the file
+	 */
+	writeFile(path: string, contents: string | Blob): Promise<void>;
+	/**
+	 * Deletes a file
+	 * @param path File to delete
+	 */
+	unlink(path: string): Promise<void>;
 
-    /**
-     * Reads the contents of a metadata tag from a file
-     * @param path The file to read from
-     * @param entry The metadata tag to read from
-     */
-    getMetadataEntry(path: string, entry: string): Promise<string | void>;
-    /**
-     * Lists the metadata tags from a file
-     * @param path The file to read from
-     */
-    listMetadataEntries(path: string): Promise<string[] | void>;
-    /**
-     * Sets the contents of a metadata tag from a file
-     * @param path The file to write to
-     * @param entry The entry to read to
-     * @param value The value to write to the entry
-     */
-    setMetadataEntry(
-        path: string,
-        entry: string,
-        value: string | undefined,
-    ): Promise<void>;
+	/**
+	 * Reads the contents of a metadata tag from a file
+	 * @param path The file to read from
+	 * @param entry The metadata tag to read from
+	 */
+	getMetadataEntry(path: string, entry: string): Promise<string | void>;
+	/**
+	 * Lists the metadata tags from a file
+	 * @param path The file to read from
+	 */
+	listMetadataEntries(path: string): Promise<string[] | void>;
+	/**
+	 * Sets the contents of a metadata tag from a file
+	 * @param path The file to write to
+	 * @param entry The entry to read to
+	 * @param value The value to write to the entry
+	 */
+	setMetadataEntry(
+		path: string,
+		entry: string,
+		value: string | undefined
+	): Promise<void>;
 
-    /**
-     * Creates a directory, dependent on the parent's existence.
-     * @param path Directory to create
-     */
-    mkdir(path: string): Promise<boolean>;
+	/**
+	 * Creates a directory, dependent on the parent's existence.
+	 * @param path Directory to create
+	 */
+	mkdir(path: string): Promise<boolean>;
 
-    createAlias(
-        newDirectory: string,
-        targetDirectory: string,
-    ): Promise<boolean>;
+	createAlias(
+		newDirectory: string,
+		targetDirectory: string
+	): Promise<boolean>;
 
-    /**
-     * Lists the contents of a directory.
-     * @param path Directory to read
-     */
-    readdir(path: string): Promise<string[]>;
-    /**
-     * Deletes a directory if empty
-     * @param path Directory to delete
-     */
-    rmdir(path: string): Promise<void>;
+	/**
+	 * Lists the contents of a directory.
+	 * @param path Directory to read
+	 */
+	readdir(path: string): Promise<string[]>;
+	/**
+	 * Deletes a directory if empty
+	 * @param path Directory to delete
+	 */
+	rmdir(path: string): Promise<void>;
 
-    /**
-     * Deletes a directory recursively or file, intelligently.
-     * @param path Location to delete
-     */
-    rm(path: string): Promise<void>;
+	/**
+	 * Deletes a directory recursively or file, intelligently.
+	 * @param path Location to delete
+	 */
+	rm(path: string): Promise<void>;
 
-    /**
-     * Determines whether a given path is a directory
-     * @param path Path to check
-     */
-    isDir(path: string): Promise<boolean>;
+	/**
+	 * Determines whether a given path is a directory
+	 * @param path Path to check
+	 */
+	isDir(path: string): Promise<boolean>;
 
-    /**
-     * Determines whether the given path contains a file OR directory
-     * @param path Path to check
-     */
-    exists(path: string): Promise<boolean>;
+	/**
+	 * Determines whether the given path contains a file OR directory
+	 * @param path Path to check
+	 */
+	exists(path: string): Promise<boolean>;
 
-    /**
-     * Provides stats about a file, such as type and size.
-     * @param path Path to retrieve stats of
-     */
-    stats(path: string): Promise<FileStats | undefined>;
+	/**
+	 * Provides stats about a file, such as type and size.
+	 * @param path Path to retrieve stats of
+	 */
+	stats(path: string): Promise<FileStats | undefined>;
 
-    /**
-     * Returns the used FS space in bytes
-     */
-    getUsedSpace(): Promise<number>;
+	/**
+	 * Returns the used FS space in bytes
+	 */
+	getUsedSpace(): Promise<number>;
 
-    /**
-     * Returns the maximum allowed FS space in bytes
-     */
-    getAllowedSpace(): Promise<number>;
+	/**
+	 * Returns the maximum allowed FS space in bytes
+	 */
+	getAllowedSpace(): Promise<number>;
 }
 
 type DomFsMetadata = Partial<Record<string, string>>;
 
 interface BaseDomFsFile {
-    metadata?: DomFsMetadata;
+	metadata?: DomFsMetadata;
 
-    creation: number;
-    modified: number;
+	creation: number;
+	modified: number;
 }
 
 interface DomFsFile extends BaseDomFsFile {
-    type: "file";
-    store: number;
-    size: number;
+	type: "file";
+	store: number;
+	size: number;
 }
 
 interface DomFsDirectory extends BaseDomFsFile {
-    type: "directory";
+	type: "directory";
 }
 
 interface DomFsAlias extends BaseDomFsFile {
-    type: "alias";
-    size: number;
-    targetDirectory: string;
+	type: "alias";
+	size: number;
+	targetDirectory: string;
 }
 
 interface DomFsSocket extends BaseDomFsFile {
-    type: "socket";
-    socketId: number;
+	type: "socket";
+	socketId: number;
 }
 
 interface IDBFile {
-    id: number;
-    contents: string;
+	id: number;
+	contents: string;
 }
 
 type FilesystemStore = DomFsFile | DomFsDirectory | DomFsAlias | DomFsSocket;
 
 export function normalise(path: string): string {
-    if (path == undefined) {
-        throw new Error("Path must not be undefined.");
-    }
+	if (path == undefined) {
+		throw new Error("Path must not be undefined.");
+	}
 
-    const chars = path.split("");
-    let result = "";
-    let lastCharWasSlash = false;
+	const chars = path.split("");
+	let result = "";
+	let lastCharWasSlash = false;
 
-    for (const char of chars) {
-        if (char == "/") {
-            if (lastCharWasSlash) {
-                // don't append
-            } else {
-                // append it
-                result += char;
-                lastCharWasSlash = true;
-            }
-        } else {
-            lastCharWasSlash = false;
-            result += char;
-        }
-    }
+	for (const char of chars) {
+		if (char == "/") {
+			if (lastCharWasSlash) {
+				// don't append
+			} else {
+				// append it
+				result += char;
+				lastCharWasSlash = true;
+			}
+		} else {
+			lastCharWasSlash = false;
+			result += char;
+		}
+	}
 
-    if (!result.startsWith("/")) result = "/" + result;
-    if (result.length > 1 && result.endsWith("/")) result = result.slice(0, -1);
+	if (!result.startsWith("/")) result = "/" + result;
+	if (result.length > 1 && result.endsWith("/")) result = result.slice(0, -1);
 
-    return result;
+	return result;
 }
 
 export function parent(path: string): string {
-    path = normalise(path);
-    if (path === "/") return "/";
-    return path.substring(0, path.lastIndexOf("/")) || "/";
+	path = normalise(path);
+	if (path === "/") return "/";
+	return path.substring(0, path.lastIndexOf("/")) || "/";
 }
 
 export function basename(path: string): string {
-    path = normalise(path);
-    return path.substring(path.lastIndexOf("/") + 1);
+	path = normalise(path);
+	return path.substring(path.lastIndexOf("/") + 1);
 }
 
 class DomFs implements FilesystemInterface {
-    #log: (message: string) => void;
-    #onFailure: (error: Error) => void;
+	#log: (message: string) => void;
+	#onFailure: (error: Error) => void;
 
-    #db?: IDBDatabase;
+	#db?: IDBDatabase;
 
-    get ready() {
-        return Boolean(this.#db);
-    }
+	get ready() {
+		return Boolean(this.#db);
+	}
 
-    #readyPromise: Promise<void>;
-    #onReady!: Function;
+	#readyPromise: Promise<void>;
+	#onReady!: Function;
 
-    // In constructor:
-    waitForReady() {
-        return this.#readyPromise;
-    }
+	// In constructor:
+	waitForReady() {
+		return this.#readyPromise;
+	}
 
-    constructor(
-        public readonly FS_DB_NAME: string,
-        public readonly NEW_FS: boolean,
-        log: (message: string) => void,
-        onFailure: (error: Error) => void,
-    ) {
-        this.#log = log;
-        this.#onFailure = onFailure;
-        this.#sync = new BroadcastChannel(`fs_sync_${FS_DB_NAME}`);
+	constructor(
+		public readonly FS_DB_NAME: string,
+		public readonly NEW_FS: boolean,
+		log: (message: string) => void,
+		onFailure: (error: Error) => void
+	) {
+		this.#log = log;
+		this.#onFailure = onFailure;
+		this.#sync = new BroadcastChannel(`fs_sync_${FS_DB_NAME}`);
 
-        this.#sync.addEventListener(
-            "message",
-            (e: MessageEvent<{ path: string; entry: FilesystemStore }>) => {
-                const { path, entry } = e.data;
+		this.#sync.addEventListener(
+			"message",
+			(e: MessageEvent<{ path: string; entry: FilesystemStore }>) => {
+				const { path, entry } = e.data;
 
-                if (entry == undefined) delete this.#index[path];
-                else this.#index[path] = entry;
-            },
-        );
+				if (entry == undefined) delete this.#index[path];
+				else this.#index[path] = entry;
+			}
+		);
 
-        this.#readyPromise = new Promise((resolve) => {
-            this.#onReady = resolve;
-        });
-    }
+		this.#readyPromise = new Promise((resolve) => {
+			this.#onReady = resolve;
+		});
+	}
 
-    #index: Partial<Record<string, FilesystemStore>> = {};
-    #sync: BroadcastChannel;
-    #listIndexEntries() {
-        return Object.keys(this.#index);
-    }
+	#index: Partial<Record<string, FilesystemStore>> = {};
+	#sync: BroadcastChannel;
+	#listIndexEntries() {
+		return Object.keys(this.#index);
+	}
 
-    async #getIndexEntry(path: string) {
-        if (this.#index[path]) {
-            return this.#index[path];
-        }
+	async #getIndexEntry(path: string) {
+		if (this.#index[path]) {
+			return this.#index[path];
+		}
 
-        await this.#refreshIndexEntry(path);
+		await this.#refreshIndexEntry(path);
 
-        return this.#index[path];
-    }
+		return this.#index[path];
+	}
 
-    async #refreshIndexEntry(path: string) {
-        if (!this.#db) throw new Error("Database has not opened yet.");
+	async #refreshIndexEntry(path: string) {
+		if (!this.#db) throw new Error("Database has not opened yet.");
 
-        const transaction = this.#db.transaction("index", "readonly");
-        const store = transaction.objectStore("index");
+		const transaction = this.#db.transaction("index", "readonly");
+		const store = transaction.objectStore("index");
 
-        return new Promise<void>((resolve, reject) => {
-            interface StoredData {
-                path: string;
-                entry: FilesystemStore;
-            }
+		return new Promise<void>((resolve, reject) => {
+			interface StoredData {
+				path: string;
+				entry: FilesystemStore;
+			}
 
-            const request: IDBRequest<StoredData> = store.get(path);
+			const request: IDBRequest<StoredData> = store.get(path);
 
-            request.onsuccess = () => {
-                const entry = request.result?.entry;
+			request.onsuccess = () => {
+				const entry = request.result?.entry;
 
-                if (entry) {
-                    this.#index[path] = entry;
-                } else {
-                    delete this.#index[path];
-                }
+				if (entry) {
+					this.#index[path] = entry;
+				} else {
+					delete this.#index[path];
+				}
 
-                resolve();
-            };
+				resolve();
+			};
 
-            request.onerror = () => reject();
-        });
-    }
+			request.onerror = () => reject();
+		});
+	}
 
-    #setIndexEntry(
-        path: string,
-        entry: FilesystemStore,
-        transaction?: IDBTransaction,
-    ) {
-        if (!transaction) {
-            if (!this.#db) throw new Error("Database has not opened yet.");
+	#setIndexEntry(
+		path: string,
+		entry: FilesystemStore,
+		transaction?: IDBTransaction
+	) {
+		if (!transaction) {
+			if (!this.#db) throw new Error("Database has not opened yet.");
 
-            transaction = this.#db.transaction("index", "readwrite");
-        }
+			transaction = this.#db.transaction("index", "readwrite");
+		}
 
-        const store = transaction.objectStore("index");
+		const store = transaction.objectStore("index");
 
-        return new Promise<void>((resolve, reject) => {
-            const request = store.put({ path, entry });
+		return new Promise<void>((resolve, reject) => {
+			const request = store.put({ path, entry });
 
-            request.onsuccess = () => {
-                this.#sync.postMessage({ path, entry });
+			request.onsuccess = () => {
+				this.#sync.postMessage({ path, entry });
 
-                this.#index[path] = entry;
+				this.#index[path] = entry;
 
-                resolve();
-            };
+				resolve();
+			};
 
-            request.onerror = () => reject();
-        });
-    }
+			request.onerror = () => reject();
+		});
+	}
 
-    #deleteIndexEntry(path: string, transaction?: IDBTransaction) {
-        if (!transaction) {
-            if (!this.#db) throw new Error("Database has not opened yet.");
+	#deleteIndexEntry(path: string, transaction?: IDBTransaction) {
+		if (!transaction) {
+			if (!this.#db) throw new Error("Database has not opened yet.");
 
-            transaction = this.#db.transaction("index", "readwrite");
-        }
+			transaction = this.#db.transaction("index", "readwrite");
+		}
 
-        const store = transaction.objectStore("index");
+		const store = transaction.objectStore("index");
 
-        return new Promise<void>((resolve, reject) => {
-            const request = store.delete(path);
+		return new Promise<void>((resolve, reject) => {
+			const request = store.delete(path);
 
-            request.onsuccess = () => {
-                this.#sync.postMessage({ path, entry: undefined });
+			request.onsuccess = () => {
+				this.#sync.postMessage({ path, entry: undefined });
 
-                delete this.#index[path];
+				delete this.#index[path];
 
-                resolve();
-            };
+				resolve();
+			};
 
-            request.onerror = () => reject();
-        });
-    }
+			request.onerror = () => reject();
+		});
+	}
 
-    async registerSocket(path: string, socketId: number) {
-        path = await this.resolve(path);
+	async registerSocket(path: string, socketId: number) {
+		path = await this.resolve(path);
 
-        if (this.#index[path]) {
-            throw new Error(
-                `Cannot register socket as a file already exists at ${path}`,
-            );
-        }
+		if (this.#index[path]) {
+			throw new Error(
+				`Cannot register socket as a file already exists at ${path}`
+			);
+		}
 
-        const parentDir = parent(path);
-        const parentEntry = await this.#getIndexEntry(parentDir);
+		const parentDir = parent(path);
+		const parentEntry = await this.#getIndexEntry(parentDir);
 
-        if (!parentEntry || parentEntry.type !== "directory")
-            throw new Error(
-                `Parent directory does not exist (writeFile ${path})`,
-            );
+		if (!parentEntry || parentEntry.type !== "directory")
+			throw new Error(
+				`Parent directory does not exist (writeFile ${path})`
+			);
 
-        const entry: DomFsSocket = {
-            type: "socket",
-            socketId,
+		const entry: DomFsSocket = {
+			type: "socket",
+			socketId,
 
-            creation: Date.now(),
-            modified: Date.now(),
-        };
+			creation: Date.now(),
+			modified: Date.now()
+		};
 
-        // don't update indexedDB
-        this.#index[path] = entry;
-    }
+		// don't update indexedDB
+		this.#index[path] = entry;
+	}
 
-    /* ================================
+	/* ================================
 	   INITIALISATION
 	================================ */
 
-    async init() {
-        if (this.NEW_FS) {
-            this.#log("Erasing old DomFs...");
+	async init() {
+		if (this.NEW_FS) {
+			this.#log("Erasing old DomFs...");
 
-            await new Promise<void>((resolve, reject) => {
-                const DBDeleteRequest = indexedDB.deleteDatabase(
-                    this.FS_DB_NAME,
-                );
-                DBDeleteRequest.onerror = () => {
-                    this.#onFailure(new Error("Error deleting database."));
-                    reject("Error deleting database.");
-                };
-                DBDeleteRequest.onsuccess = () => {
-                    this.#log("Database deleted successfully");
-                    resolve();
-                };
-            });
-        }
+			await new Promise<void>((resolve, reject) => {
+				const DBDeleteRequest = indexedDB.deleteDatabase(
+					this.FS_DB_NAME
+				);
+				DBDeleteRequest.onerror = () => {
+					this.#onFailure(new Error("Error deleting database."));
+					reject("Error deleting database.");
+				};
+				DBDeleteRequest.onsuccess = () => {
+					this.#log("Database deleted successfully");
+					resolve();
+				};
+			});
+		}
 
-        this.#log("Opening filesystem from indexedDB...");
+		this.#log("Opening filesystem from indexedDB...");
 
-        enum FsVersions {
-            initial = 1,
-        }
+		enum FsVersions {
+			initial = 1
+		}
 
-        const init = new Promise<void>((resolve, reject) => {
-            const request = indexedDB.open(this.FS_DB_NAME, FsVersions.initial);
+		const init = new Promise<void>((resolve, reject) => {
+			const request = indexedDB.open(this.FS_DB_NAME, FsVersions.initial);
 
-            request.onerror = () => {
-                this.#onFailure(new Error("Failed to open IndexedDB"));
+			request.onerror = () => {
+				this.#onFailure(new Error("Failed to open IndexedDB"));
 
-                reject("Failed to open IndexedDB");
-            };
+				reject("Failed to open IndexedDB");
+			};
 
-            request.onupgradeneeded = (event) => {
-                const openRequest = event.target as IDBOpenDBRequest;
-                const db = openRequest.result;
+			request.onupgradeneeded = (event) => {
+				const openRequest = event.target as IDBOpenDBRequest;
+				const db = openRequest.result;
 
-                if (!db.objectStoreNames.contains("files")) {
-                    this.#log("Creating files store in indexedDB");
-                    db.createObjectStore("files", {
-                        keyPath: "id",
-                        autoIncrement: true,
-                    });
-                }
+				if (!db.objectStoreNames.contains("files")) {
+					this.#log("Creating files store in indexedDB");
+					db.createObjectStore("files", {
+						keyPath: "id",
+						autoIncrement: true
+					});
+				}
 
-                if (!db.objectStoreNames.contains("index")) {
-                    this.#log("Creating index store in indexedDB");
-                    db.createObjectStore("index", {
-                        keyPath: "path",
-                    });
-                }
-            };
+				if (!db.objectStoreNames.contains("index")) {
+					this.#log("Creating index store in indexedDB");
+					db.createObjectStore("index", {
+						keyPath: "path"
+					});
+				}
+			};
 
-            request.onsuccess = async () => {
-                this.#log("Successfully loaded filesystem from indexedDB.");
-                this.#db = request.result;
+			request.onsuccess = async () => {
+				this.#log("Successfully loaded filesystem from indexedDB.");
+				this.#db = request.result;
 
-                resolve();
-            };
-        });
+				resolve();
+			};
+		});
 
-        await init;
+		await init;
 
-        await this.#loadIndex();
+		await this.#loadIndex();
 
-        this.#onReady();
-    }
+		this.#onReady();
+	}
 
-    /* ================================
+	/* ================================
 	   UTILITIES
 	================================ */
 
-    #indexLoaded = false;
-    async #loadIndex() {
-        if (!this.#db || this.#indexLoaded) return;
+	#indexLoaded = false;
+	async #loadIndex() {
+		if (!this.#db || this.#indexLoaded) return;
 
-        this.#index = {};
+		this.#index = {};
 
-        const transaction = this.#db.transaction("index", "readonly");
-        const store = transaction.objectStore("index");
+		const transaction = this.#db.transaction("index", "readonly");
+		const store = transaction.objectStore("index");
 
-        await new Promise<void>((resolve) => {
-            store.openCursor().onsuccess = (event) => {
-                const cursor = (event.target as IDBRequest).result;
+		await new Promise<void>((resolve) => {
+			store.openCursor().onsuccess = (event) => {
+				const cursor = (event.target as IDBRequest).result;
 
-                if (!cursor) {
-                    resolve();
-                    return;
-                }
+				if (!cursor) {
+					resolve();
+					return;
+				}
 
-                this.#index[cursor.key as string] = cursor.value.entry;
+				this.#index[cursor.key as string] = cursor.value.entry;
 
-                cursor.continue();
-            };
-        });
+				cursor.continue();
+			};
+		});
 
-        this.#indexLoaded = true;
+		this.#indexLoaded = true;
 
-        if (!this.#index["/"]) {
-            const now = Date.now();
+		if (!this.#index["/"]) {
+			const now = Date.now();
 
-            const root: DomFsDirectory = {
-                creation: now,
-                modified: now,
-                type: "directory",
-            };
+			const root: DomFsDirectory = {
+				creation: now,
+				modified: now,
+				type: "directory"
+			};
 
-            await this.#setIndexEntry("/", root);
-        }
-    }
+			await this.#setIndexEntry("/", root);
+		}
+	}
 
-    async resolve(path: string): Promise<string> {
-        const normalised = normalise(path);
-        const parts = normalised.split("/").filter((item) => item !== "");
+	async resolve(path: string): Promise<string> {
+		const normalised = normalise(path);
+		const parts = normalised.split("/").filter((item) => item !== "");
 
-        let position = "/";
+		let position = "/";
 
-        for (let i = 0; i < parts.length; i++) {
-            const part = parts[i];
-            const isLast = i === parts.length - 1;
+		for (let i = 0; i < parts.length; i++) {
+			const part = parts[i];
+			const isLast = i === parts.length - 1;
 
-            const entry = await this.#getIndexEntry(position);
+			const entry = await this.#getIndexEntry(position);
 
-            if (!entry) {
-                // doesn't exist. just assume it's a directory.
-                position =
-                    position === "/" ? `/${part}` : `${position}/${part}`;
-                continue;
-            }
+			if (!entry) {
+				// doesn't exist. just assume it's a directory.
+				position =
+					position === "/" ? `/${part}` : `${position}/${part}`;
+				continue;
+			}
 
-            switch (entry.type) {
-                case "directory":
-                    position =
-                        position === "/" ? `/${part}` : `${position}/${part}`;
-                    break;
+			switch (entry.type) {
+				case "directory":
+					position =
+						position === "/" ? `/${part}` : `${position}/${part}`;
+					break;
 
-                case "alias":
-                    // Jump to the alias target directory and append the current part
-                    position = normalise(`${entry.targetDirectory}/${part}`);
-                    break;
+				case "alias":
+					// Jump to the alias target directory and append the current part
+					position = normalise(`${entry.targetDirectory}/${part}`);
+					break;
 
-                default:
-                    if (!isLast) {
-                        throw new Error(
-                            `Path is invalid: file or socket ('${part}') found within traversal`,
-                        );
-                    }
-                    position =
-                        position === "/" ? `/${part}` : `${position}/${part}`;
-            }
-        }
+				default:
+					if (!isLast) {
+						throw new Error(
+							`Path is invalid: file or socket ('${part}') found within traversal`
+						);
+					}
+					position =
+						position === "/" ? `/${part}` : `${position}/${part}`;
+			}
+		}
 
-        const entry = await this.#getIndexEntry(position);
+		const entry = await this.#getIndexEntry(position);
 
-        if (entry?.type == "alias") {
-            position = entry.targetDirectory;
-        }
+		if (entry?.type == "alias") {
+			position = entry.targetDirectory;
+		}
 
-        return normalise(position);
-    }
+		return normalise(position);
+	}
 
-    /* ================================
+	/* ================================
 	   DIRECTORY OPERATIONS
 	================================ */
 
-    async mkdir(path: string) {
-        path = await this.resolve(path);
+	async mkdir(path: string) {
+		path = await this.resolve(path);
 
-        const currentEntry = await this.#getIndexEntry(path);
-        if (currentEntry) return false;
+		const currentEntry = await this.#getIndexEntry(path);
+		if (currentEntry) return false;
 
-        const parentDir = parent(path);
-        const parentEntry = await this.#getIndexEntry(parentDir);
+		const parentDir = parent(path);
+		const parentEntry = await this.#getIndexEntry(parentDir);
 
-        if (!parentEntry || parentEntry.type !== "directory")
-            throw new Error(`Parent directory does not exist (mkdir ${path})`);
+		if (!parentEntry || parentEntry.type !== "directory")
+			throw new Error(`Parent directory does not exist (mkdir ${path})`);
 
-        const now = Date.now();
+		const now = Date.now();
 
-        const entry: DomFsDirectory = {
-            creation: now,
-            modified: now,
-            type: "directory",
-        };
+		const entry: DomFsDirectory = {
+			creation: now,
+			modified: now,
+			type: "directory"
+		};
 
-        await this.#setIndexEntry(path, entry);
-        return true;
-    }
+		await this.#setIndexEntry(path, entry);
+		return true;
+	}
 
-    async createAlias(path: string, targetDirectory: string): Promise<boolean> {
-        path = await this.resolve(path);
-        targetDirectory = await this.resolve(targetDirectory);
+	async createAlias(path: string, targetDirectory: string): Promise<boolean> {
+		path = await this.resolve(path);
+		targetDirectory = await this.resolve(targetDirectory);
 
-        const currentEntry = await this.#getIndexEntry(path);
-        if (currentEntry) return false;
+		const currentEntry = await this.#getIndexEntry(path);
+		if (currentEntry) return false;
 
-        const parentDir = parent(path);
-        const parentEntry = await this.#getIndexEntry(parentDir);
+		const parentDir = parent(path);
+		const parentEntry = await this.#getIndexEntry(parentDir);
 
-        if (!parentEntry || parentEntry.type !== "directory")
-            throw new Error(
-                `Parent directory does not exist (createAlias ${path})`,
-            );
+		if (!parentEntry || parentEntry.type !== "directory")
+			throw new Error(
+				`Parent directory does not exist (createAlias ${path})`
+			);
 
-        const now = Date.now();
+		const now = Date.now();
 
-        const entry: DomFsAlias = {
-            size: 0,
-            creation: now,
-            modified: now,
-            type: "alias",
-            targetDirectory,
-        };
+		const entry: DomFsAlias = {
+			size: 0,
+			creation: now,
+			modified: now,
+			type: "alias",
+			targetDirectory
+		};
 
-        await this.#setIndexEntry(path, entry);
-        return true;
-    }
+		await this.#setIndexEntry(path, entry);
+		return true;
+	}
 
-    async readdir(path: string): Promise<string[]> {
-        path = await this.resolve(path);
+	async readdir(path: string): Promise<string[]> {
+		path = await this.resolve(path);
 
-        const dir = await this.#getIndexEntry(path);
-        if (!dir || dir.type !== "directory")
-            throw new Error(`Not a directory: '${path}'`);
+		const dir = await this.#getIndexEntry(path);
+		if (!dir || dir.type !== "directory")
+			throw new Error(`Not a directory: '${path}'`);
 
-        const keys = this.#listIndexEntries();
+		const keys = this.#listIndexEntries();
 
-        function buildChildrenMap() {
-            const childrenMap = new Map<string, string[]>();
+		function buildChildrenMap() {
+			const childrenMap = new Map<string, string[]>();
 
-            for (const path of keys) {
-                if (path === "/") continue;
+			for (const path of keys) {
+				if (path === "/") continue;
 
-                const lastSlash = path.lastIndexOf("/");
-                const parentPath =
-                    lastSlash === 0 ? "/" : path.slice(0, lastSlash);
+				const lastSlash = path.lastIndexOf("/");
+				const parentPath =
+					lastSlash === 0 ? "/" : path.slice(0, lastSlash);
 
-                if (!childrenMap.has(parentPath)) {
-                    childrenMap.set(parentPath, []);
-                }
+				if (!childrenMap.has(parentPath)) {
+					childrenMap.set(parentPath, []);
+				}
 
-                const filename = path.split("/").pop();
+				const filename = path.split("/").pop();
 
-                // @ts-expect-error // we just populated it above, it's fine
-                childrenMap.get(parentPath).push(filename);
-            }
+				// @ts-expect-error // we just populated it above, it's fine
+				childrenMap.get(parentPath).push(filename);
+			}
 
-            return childrenMap;
-        }
-        const map = buildChildrenMap();
+			return childrenMap;
+		}
+		const map = buildChildrenMap();
 
-        const results = map.get(path);
-        if (results == undefined) return [];
-        else return results;
-    }
+		const results = map.get(path);
+		if (results == undefined) return [];
+		else return results;
+	}
 
-    async rmdir(path: string) {
-        path = await this.resolve(path);
+	async rmdir(path: string) {
+		path = await this.resolve(path);
 
-        if (path === "/") throw new Error("Cannot remove root");
+		if (path === "/") throw new Error("Cannot remove root");
 
-        const entry = await this.#getIndexEntry(path);
-        if (!entry || entry.type !== "directory")
-            throw new Error(`Not a directory: '${path}'`);
+		const entry = await this.#getIndexEntry(path);
+		if (!entry || entry.type !== "directory")
+			throw new Error(`Not a directory: '${path}'`);
 
-        const keys = this.#listIndexEntries();
+		const keys = this.#listIndexEntries();
 
-        for (const key of keys) {
-            if (parent(key) === path) throw new Error("Directory not empty");
-        }
+		for (const key of keys) {
+			if (parent(key) === path) throw new Error("Directory not empty");
+		}
 
-        await this.#deleteIndexEntry(path);
-    }
+		await this.#deleteIndexEntry(path);
+	}
 
-    /* ================================
+	/* ================================
 	   FILE OPERATIONS
 	================================ */
 
-    async readFile<T extends Object = Object>(
-        path: string,
-        format: "text" | "json" = "text",
-    ): Promise<string | T | undefined> {
-        path = await this.resolve(path);
+	async readFile<T extends Object = Object>(
+		path: string,
+		format: "text" | "json" | "blob" = "text"
+	): Promise<string | Blob | T | undefined> {
+		path = await this.resolve(path);
 
-        const file = await this.#getIndexEntry(path);
-        if (!file || file.type !== "file") return undefined;
+		const file = await this.#getIndexEntry(path);
+		if (!file || file.type !== "file") return undefined;
 
-        const transaction = this.#db!.transaction("files", "readonly");
-        const store = transaction.objectStore("files");
+		const transaction = this.#db!.transaction("files", "readonly");
+		const store = transaction.objectStore("files");
 
-        return new Promise((resolve, reject) => {
-            const req: IDBRequest<IDBFile> = store.get(file.store);
+		return new Promise((resolve, reject) => {
+			const req: IDBRequest<IDBFile> = store.get(file.store);
 
-            req.onsuccess = () => {
-                const contents: string | void = req.result?.contents;
+			req.onsuccess = () => {
+				const contents = req.result?.contents as
+					string | Blob | undefined;
 
-                if (!contents) {
-                    resolve(undefined);
-                    return;
-                }
+				if (!contents) {
+					resolve(undefined);
+					return;
+				}
 
-                switch (format) {
-                    case "text":
-                        resolve(String(contents));
-                        break;
+				switch (format) {
+					case "text":
+						resolve(String(contents));
+						break;
 
-                    case "json":
-                        try {
-                            resolve(JSON.parse(String(contents)));
-                        } catch (e) {
-                            reject(`Failed to parse JSON: ${e}`);
-                        }
-                        break;
+					case "json":
+						try {
+							resolve(JSON.parse(String(contents)));
+						} catch (e) {
+							reject(`Failed to parse JSON: ${e}`);
+						}
+						break;
 
-                    default:
-                        throw new Error(
-                            "Unrecognised readFile format: " + format,
-                        );
-                }
-            };
-            req.onerror = () => reject();
-        });
-    }
+					case "blob":
+						if (contents instanceof Blob) return contents;
+						else {
+							return new Blob([contents], { type: "text/plain" });
+						}
 
-    async writeFile(path: string, contents: string) {
-        path = await this.resolve(path);
+						break;
 
-        const parentDir = parent(path);
-        const parentEntry = await this.#getIndexEntry(parentDir);
+					default:
+						throw new Error(
+							"Unrecognised readFile format: " + format
+						);
+				}
+			};
+			req.onerror = () => reject();
+		});
+	}
 
-        if (!parentEntry || parentEntry.type !== "directory")
-            throw new Error(
-                `Parent directory does not exist (writeFile ${path})`,
-            );
+	async writeFile(path: string, contents: string | Blob) {
+		path = await this.resolve(path);
 
-        const now = Date.now();
-        const existing = await this.#getIndexEntry(path);
+		const parentDir = parent(path);
+		const parentEntry = await this.#getIndexEntry(parentDir);
 
-        const transaction = this.#db!.transaction(
-            ["index", "files"],
-            "readwrite",
-        );
-        const fileStore = transaction.objectStore("files");
+		if (!parentEntry || parentEntry.type !== "directory")
+			throw new Error(
+				`Parent directory does not exist (writeFile ${path})`
+			);
 
-        return new Promise<void>(async (resolve, reject) => {
-            if (existing) {
-                // MODIFY
-                if (existing.type !== "file") {
-                    reject(`Cannot write to ${existing.type}`);
-                    return;
-                }
+		const now = Date.now();
+		const existing = await this.#getIndexEntry(path);
 
-                fileStore.put({ id: existing.store, contents } as IDBFile);
-                const updated: DomFsFile = {
-                    ...existing,
-                    size: contents.length,
-                    modified: now,
-                };
+		const transaction = this.#db!.transaction(
+			["index", "files"],
+			"readwrite"
+		);
+		const fileStore = transaction.objectStore("files");
 
-                await this.#setIndexEntry(path, updated, transaction);
-                resolve();
-                return;
-            }
+		const size = contents instanceof Blob ? contents.size : contents.length;
 
-            // CREATE
-            const req = fileStore.add({ contents });
-            req.onsuccess = async () => {
-                const fileId = req.result as number;
-                const entry: DomFsFile = {
-                    store: fileId,
-                    size: contents.length,
-                    creation: now,
-                    modified: now,
-                    type: "file",
-                };
+		return new Promise<void>(async (resolve, reject) => {
+			if (existing) {
+				// MODIFY
+				if (existing.type !== "file") {
+					reject(`Cannot write to ${existing.type}`);
+					return;
+				}
 
-                await this.#setIndexEntry(path, entry, transaction);
+				fileStore.put({ id: existing.store, contents } as IDBFile);
+				const updated: DomFsFile = {
+					...existing,
+					size,
+					modified: now
+				};
 
-                resolve();
-            };
+				await this.#setIndexEntry(path, updated, transaction);
+				resolve();
+				return;
+			}
 
-            req.onerror = () => reject();
-        });
-    }
+			// CREATE
+			const req = fileStore.add({ contents });
+			req.onsuccess = async () => {
+				const fileId = req.result as number;
+				const entry: DomFsFile = {
+					store: fileId,
+					size: size,
+					creation: now,
+					modified: now,
+					type: "file"
+				};
 
-    async getMetadataEntry(
-        path: string,
-        entry: string,
-    ): Promise<string | undefined> {
-        path = await this.resolve(path);
+				await this.#setIndexEntry(path, entry, transaction);
 
-        const file = await this.#getIndexEntry(path);
-        if (!file || file.type !== "file") return undefined;
+				resolve();
+			};
 
-        const metadata = file.metadata;
-        if (!metadata) return undefined;
+			req.onerror = () => reject();
+		});
+	}
 
-        return metadata[entry];
-    }
+	async getMetadataEntry(
+		path: string,
+		entry: string
+	): Promise<string | undefined> {
+		path = await this.resolve(path);
 
-    async listMetadataEntries(path: string) {
-        path = await this.resolve(path);
+		const file = await this.#getIndexEntry(path);
+		if (!file || file.type !== "file") return undefined;
 
-        const file = await this.#getIndexEntry(path);
-        if (!file || file.type !== "file") return undefined;
+		const metadata = file.metadata;
+		if (!metadata) return undefined;
 
-        const metadata = file.metadata;
-        if (!metadata) return [];
+		return metadata[entry];
+	}
 
-        return Object.keys(metadata);
-    }
+	async listMetadataEntries(path: string) {
+		path = await this.resolve(path);
 
-    async setMetadataEntry(
-        path: string,
-        entry: string,
-        value: string,
-    ): Promise<void> {
-        path = await this.resolve(path);
+		const file = await this.#getIndexEntry(path);
+		if (!file || file.type !== "file") return undefined;
 
-        const parentDir = parent(path);
-        const parentEntry = await this.#getIndexEntry(parentDir);
+		const metadata = file.metadata;
+		if (!metadata) return [];
 
-        if (!parentEntry || parentEntry.type !== "directory")
-            throw new Error(
-                `Parent directory does not exist (writeFile ${path})`,
-            );
+		return Object.keys(metadata);
+	}
 
-        const now = Date.now();
-        const existing = await this.#getIndexEntry(path);
+	async setMetadataEntry(
+		path: string,
+		entry: string,
+		value: string
+	): Promise<void> {
+		path = await this.resolve(path);
 
-        // MODIFY
-        if (existing) {
-            if (existing.type !== "file")
-                throw new Error(`Cannot write to metadata of ${existing.type}`);
+		const parentDir = parent(path);
+		const parentEntry = await this.#getIndexEntry(parentDir);
 
-            const updated: DomFsFile = {
-                ...existing,
-                modified: now,
-                metadata: {
-                    ...existing.metadata,
-                    [entry]: value,
-                },
-            };
+		if (!parentEntry || parentEntry.type !== "directory")
+			throw new Error(
+				`Parent directory does not exist (writeFile ${path})`
+			);
 
-            await this.#setIndexEntry(path, updated);
-            return;
-        }
-    }
+		const now = Date.now();
+		const existing = await this.#getIndexEntry(path);
 
-    async unlink(path: string) {
-        path = await this.resolve(path);
+		// MODIFY
+		if (existing) {
+			if (existing.type !== "file")
+				throw new Error(`Cannot write to metadata of ${existing.type}`);
 
-        const entry = await this.#getIndexEntry(path);
-        if (!entry || entry.type !== "file") return;
+			const updated: DomFsFile = {
+				...existing,
+				modified: now,
+				metadata: {
+					...existing.metadata,
+					[entry]: value
+				}
+			};
 
-        const transaction = this.#db!.transaction(
-            ["index", "files"],
-            "readwrite",
-        );
+			await this.#setIndexEntry(path, updated);
+			return;
+		}
+	}
 
-        const store = transaction.objectStore("files");
-        store.delete(entry.store);
+	async unlink(path: string) {
+		path = await this.resolve(path);
 
-        await this.#deleteIndexEntry(path, transaction);
-    }
+		const entry = await this.#getIndexEntry(path);
+		if (!entry || entry.type !== "file") return;
 
-    async rm(path: string) {
-        path = await this.resolve(path);
+		const transaction = this.#db!.transaction(
+			["index", "files"],
+			"readwrite"
+		);
 
-        const entry = await this.#getIndexEntry(path);
-        if (!entry) return;
+		const store = transaction.objectStore("files");
+		store.delete(entry.store);
 
-        if (entry.type === "file") {
-            await this.unlink(path);
-            return;
-        }
+		await this.#deleteIndexEntry(path, transaction);
+	}
 
-        const keys = this.#listIndexEntries();
-        const children = keys.filter((p) => parent(p) === path);
+	async rm(path: string) {
+		path = await this.resolve(path);
 
-        for (const child of children) await this.rm(child);
+		const entry = await this.#getIndexEntry(path);
+		if (!entry) return;
 
-        await this.rmdir(path);
-    }
+		if (entry.type === "file") {
+			await this.unlink(path);
+			return;
+		}
 
-    async isDir(path: string): Promise<boolean> {
-        path = await this.resolve(path);
+		const keys = this.#listIndexEntries();
+		const children = keys.filter((p) => parent(p) === path);
 
-        if (path === "/") return true;
+		for (const child of children) await this.rm(child);
 
-        const store = await this.#getIndexEntry(path);
+		await this.rmdir(path);
+	}
 
-        return store?.type === "directory";
-    }
+	async isDir(path: string): Promise<boolean> {
+		path = await this.resolve(path);
 
-    async exists(path: string) {
-        path = await this.resolve(path);
+		if (path === "/") return true;
 
-        if (path === "/") return true;
+		const store = await this.#getIndexEntry(path);
 
-        return (await this.#getIndexEntry(path)) !== undefined;
-    }
+		return store?.type === "directory";
+	}
 
-    async stats(path: string): Promise<FileStats | undefined> {
-        path = await this.resolve(path);
+	async exists(path: string) {
+		path = await this.resolve(path);
 
-        const entry = await this.#getIndexEntry(path);
+		if (path === "/") return true;
 
-        if (!entry) return;
+		return (await this.#getIndexEntry(path)) !== undefined;
+	}
 
-        return {
-            size: "size" in entry ? entry.size : -1,
-            type: entry.type as "file" | "directory" | "socket", // alias is resolved away.
-            modified: entry.modified,
-            created: entry.creation,
-        };
-    }
+	async stats(path: string): Promise<FileStats | undefined> {
+		path = await this.resolve(path);
 
-    async getUsedSpace() {
-        const storageInfo = await navigator.storage.estimate();
-        return storageInfo.usage ?? 0;
-    }
+		const entry = await this.#getIndexEntry(path);
 
-    async getAllowedSpace() {
-        const storageInfo = await navigator.storage.estimate();
-        return storageInfo.quota ?? 1;
-    }
+		if (!entry) return;
+
+		return {
+			size: "size" in entry ? entry.size : -1,
+			type: entry.type as "file" | "directory" | "socket", // alias is resolved away.
+			modified: entry.modified,
+			created: entry.creation
+		};
+	}
+
+	async getUsedSpace() {
+		const storageInfo = await navigator.storage.estimate();
+		return storageInfo.usage ?? 0;
+	}
+
+	async getAllowedSpace() {
+		const storageInfo = await navigator.storage.estimate();
+		return storageInfo.quota ?? 1;
+	}
 }
 
 export default DomFs;
